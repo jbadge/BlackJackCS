@@ -65,16 +65,41 @@ namespace BlackJackCS
         static void WelcomeToBlackjack()
         {
             // ##### FIX ##### -- BG and FG Color not working
-            //Console.BackgroundColor = ConsoleColor.Blue;
-            //Console.ForegroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.Blue;
+            /*Console.BackgroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.White;*/
+            //Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("#################################");
             Console.WriteLine("#################################");
             Console.WriteLine("##### WELCOME TO BLACKJACK! #####");
             Console.WriteLine("#################################");
             Console.WriteLine("#################################");
             Console.WriteLine("#################################");
+            Console.WriteLine(@"    
+            Welcome to ");
+            Console.WriteLine(@"
+    /$$$$$$$ /$$       /$$$$$$   /$$$$$$ /$$   /$$    /$$$$$  /$$$$$$   /$$$$$$ /$$   /$$
+   | $$__  $| $$      /$$__  $$ /$$__  $| $$  /$$/   |__  $$ /$$__  $$ /$$__  $| $$  /$$/
+   | $$  \ $| $$     | $$  \ $$| $$  \__| $$ /$$/       | $$| $$  \ $$| $$  \__| $$ /$$/ 
+   | $$$$$$$| $$     | $$$$$$$$| $$     | $$$$$/        | $$| $$$$$$$$| $$     | $$$$$/ 
+   | $$__  $| $$     | $$__  $$| $$     | $$  $$   /$$  | $$| $$__  $$| $$     | $$  $$ 
+   | $$  \ $| $$     | $$  | $$| $$    $| $$\  $$ | $$  | $$| $$  | $$| $$    $| $$\  $$ 
+   | $$$$$$$| $$$$$$$| $$  | $$|  $$$$$$| $$ \  $$|  $$$$$$/| $$  | $$|  $$$$$$| $$ \  $$
+   |_______/|________|__/  |__/ \______/|__/  \__/ \______/ |__/  |__/\______/ |__/  \__/
+   ");
             Console.ResetColor();
+        }
+
+        static void YouGotBlackjack()
+        {
+            Console.WriteLine(@" 
+ _     _            _    _            _      _
+| |   | |          | |  (_)          | |    | |
+| |__ | | __ _  ___| | ___  __ _  ___| | __ | |
+| '_ \| |/ _` |/ __| |/ / |/ _` |/ __| |/ / | |
+| |_) | | (_| | (__|   <| | (_| | (__|   <  |_|
+|_.__/|_|\__,_|\___|_|\_\ |\__,_|\___|_|\_\ (_)
+                       _/ |                
+                      |__/                 ");
         }
 
         static void Blackjack()
@@ -145,24 +170,16 @@ namespace BlackJackCS
                 if (playerValue == 21)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("### BLACKJACK!! ###");
+                    //Console.WriteLine("### BLACKJACK!! ###");
+                    YouGotBlackjack();
                     Console.ResetColor();
-
-                    /*" _     _            _    _            _    
-| |   | |          | |  (_)          | |   
-| |__ | | __ _  ___| | ___  __ _  ___| | __
-| '_ \| |/ _` |/ __| |/ / |/ _` |/ __| |/ /
-| |_) | | (_| | (__|   <| | (_| | (__|   < 
-|_.__/|_|\__,_|\___|_|\_\ |\__,_|\___|_|\_\
-                   _/ |                
-                  |__/                 !");*/
                     return;
                 }
 
                 // PLAYER HAS NOT BUSTED OR HIT BLACKJACK
                 Console.WriteLine("Would you like to (H)it or (S)tand? Press (V) to get the point value of your hand.");
                 //Console.WriteLine("Press (V) to get the point value of your hand.");
-                var userInput = Console.ReadLine().ToLower();
+                var userInput = Console.ReadKey(true).Key.ToString().ToLower();
 
                 // ## PLAYER SELECTS HIT ##
                 if (userInput == "v")
@@ -171,7 +188,7 @@ namespace BlackJackCS
                     Console.WriteLine($"Your card total is {playerValue}.");
                     Console.ResetColor();
                     Console.WriteLine("Would you like to (H)it or (S)tand?");
-                    userInput = Console.ReadLine().ToLower();
+                    userInput = Console.ReadKey(true).Key.ToString().ToLower();
                 }
                 if (userInput == "h")
                 {
@@ -216,6 +233,7 @@ namespace BlackJackCS
             }
 
             // ### DEALER TURN BEGINS ###
+            // FIX NEEDED IN HERE
             while (dealerValue < 17)
             {
 
@@ -227,7 +245,8 @@ namespace BlackJackCS
                 Console.WriteLine($"The dealer's cards are {FormatHand(dealerHand)}.");
                 Console.ResetColor();
             }
-
+            // is there way to streamline the color changes?
+            // is there way to streamline displaying hand values for each instance?
             // DEALER BUSTS
             //Console.WriteLine($"Dealer has {dealerValue} points and you have {playerValue} points...");
             if (dealerValue > 21)
@@ -278,16 +297,10 @@ namespace BlackJackCS
             {
                 Blackjack();
 
-                /*// ### TRYING TO GET INPUT TO BE READ BUT NOT DISPLAYED....
-                //ConsoleKeyInfo cki;
-                //var cki = Console.ReadKey();
                 Console.WriteLine("Do you want to play again? (Y)es or (No)");
-                //var userInput = cki.ToLower();
-                //var userInput = Console.ReadKey.ToLower();
-                var userInput = Console.Read().ToLower();*/
+                var userInput = Console.ReadKey(true).Key.ToString().ToLower();
 
                 Console.WriteLine("Do you want to play again? (Y)es or (No)");
-                var userInput = Console.ReadLine().ToLower();
                 if (userInput != "y")
                 {
                     playing = false;
