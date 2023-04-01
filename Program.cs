@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace BlackJackCS
 {
-    // //class Deck
     class Card
     {
         public string Suit { get; set; }
@@ -33,6 +32,7 @@ namespace BlackJackCS
         }
 
         static void DealHand(List<Card> from, List<Card> to, int num = 1, bool print = true)
+        // FIX IN HERE
         {
             for (int i = 0; i < num; i++)
             {
@@ -54,7 +54,26 @@ namespace BlackJackCS
             {
                 sum += hand[i].Value;
             }
+            var numberOfAcesLeft = HowManyAces(hand);
+            while (sum > 21 && numberOfAcesLeft > 0)
+            {
+                sum -= 10;
+                numberOfAcesLeft--;
+            }
             return sum;
+        }
+
+        static int HowManyAces(List<Card> hand)
+        {
+            var numberOfAces = 0;
+            for (int i = 0; i < hand.Count; i++)
+            {
+                if (hand[i].Face == "Ace")
+                {
+                    numberOfAces++;
+                }
+            }
+            return numberOfAces;
         }
 
         static string FormatHand(List<Card> hand)
@@ -64,18 +83,9 @@ namespace BlackJackCS
 
         static void WelcomeToBlackjack()
         {
-            // ##### FIX ##### -- BG and FG Color not working
-            /*Console.BackgroundColor = ConsoleColor.Blue;
-            Console.ForegroundColor = ConsoleColor.White;*/
-            //Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("#################################");
-            Console.WriteLine("#################################");
-            Console.WriteLine("##### WELCOME TO BLACKJACK! #####");
-            Console.WriteLine("#################################");
-            Console.WriteLine("#################################");
-            Console.WriteLine("#################################");
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(@"    
-            Welcome to ");
+            Welcome to...");
             Console.WriteLine(@"
     /$$$$$$$ /$$       /$$$$$$   /$$$$$$ /$$   /$$    /$$$$$  /$$$$$$   /$$$$$$ /$$   /$$
    | $$__  $| $$      /$$__  $$ /$$__  $| $$  /$$/   |__  $$ /$$__  $$ /$$__  $| $$  /$$/
@@ -86,7 +96,20 @@ namespace BlackJackCS
    | $$$$$$$| $$$$$$$| $$  | $$|  $$$$$$| $$ \  $$|  $$$$$$/| $$  | $$|  $$$$$$| $$ \  $$
    |_______/|________|__/  |__/ \______/|__/  \__/ \______/ |__/  |__/\______/ |__/  \__/
    ");
-            Console.ResetColor();
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey(true).Key.ToString();
+            Console.Clear();
+        }
+
+        static void Split(List<Card> hand)
+        {
+            var playerHand1 = hand[0];
+            var playerHand2 = hand[1];
+            for (int i = 1; i < 3; i++)
+            {
+                playerHand = playerHand(i);
+                return playerHand;
+            }
         }
 
         static void YouGotBlackjack()
@@ -104,6 +127,9 @@ namespace BlackJackCS
 
         static void Blackjack()
         {
+            // is there way to streamline the color changes?
+            // is there way to streamline displaying hand values for each instance?
+
             // ### LOCAL VARIABLES ###
             var deckOfCards = new List<Card>();
             var suits = new List<string>() { "Clubs", "Diamonds", "Hearts", "Spades" };
@@ -137,17 +163,18 @@ namespace BlackJackCS
             ShuffleDeck(deckOfCards);
 
             // ### DEALING HANDS ###
-            Console.WriteLine("");
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("You are dealt two cards...");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("You are dealt two cards.");
             Console.ResetColor();
             var playerHand = new List<Card>();
             DealHand(deckOfCards, playerHand, 2, false);
+            // E1
+            // how can I put print player hand but then not print the first time in game loop? See "E2"
 
             var dealerHand = new List<Card>();
             DealHand(deckOfCards, dealerHand, 1, false);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"The dealer has {FormatHand(dealerHand)} and an unknown card.");
+            Console.WriteLine($"The dealer has the {FormatHand(dealerHand)} and an unknown card.");
             Console.ResetColor();
             DealHand(deckOfCards, dealerHand, 1, false);
 
@@ -156,59 +183,67 @@ namespace BlackJackCS
             var playerValue = AddUpHand(playerHand);
             var dealerValue = AddUpHand(dealerHand);
 
+            // SPLIT
+            if (playerHand[0].Value == playerHand[1].Value && playerHand[0].Value == 10)
+            {
+                Split(playerHand);
+            }
+
             // ### PLAYER HAND BEGINS ###
             while (hitting)
             {
                 // REVEAL HAND TO PLAYER
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"Your cards are {FormatHand(playerHand)}.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"Your cards are the {FormatHand(playerHand)}.");
                 Console.ResetColor();
-                // how could I put line here to work for dealer hand?
-                // Press any button to continue...
+                // E2
+                // how could I put line here to work for dealer hand but only first time? See "E1"
 
                 // BLACKJACK! 
                 if (playerValue == 21)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    //Console.WriteLine("### BLACKJACK!! ###");
                     YouGotBlackjack();
                     Console.ResetColor();
-                    return;
+                    break;
                 }
 
                 // PLAYER HAS NOT BUSTED OR HIT BLACKJACK
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("Would you like to (H)it or (S)tand? Press (V) to get the point value of your hand.");
-                //Console.WriteLine("Press (V) to get the point value of your hand.");
                 var userInput = Console.ReadKey(true).Key.ToString().ToLower();
 
-                // ## PLAYER SELECTS HIT ##
+                // PLAYER SELECTS CHECK VALUE
                 if (userInput == "v")
                 {
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine($"Your card total is {playerValue}.");
-                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine("Would you like to (H)it or (S)tand?");
                     userInput = Console.ReadKey(true).Key.ToString().ToLower();
+                    Console.ResetColor();
                 }
+
+                // ## PLAYER SELECTS HIT ##
                 if (userInput == "h")
                 {
-
                     // PLAYER DEALT ADDITIONAL CARD(S)
                     DealHand(deckOfCards, playerHand);
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("A card is dealt to you...");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("A card is dealt to you.");
                     Console.ResetColor();
                     playerValue = AddUpHand(playerHand);
 
                     // PLAYER BUSTS
                     if (playerValue > 21)
                     {
-                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.WriteLine($"Your cards are {FormatHand(playerHand)}.");
                         Console.ForegroundColor = ConsoleColor.Magenta;
                         Console.WriteLine($"You have {playerValue} points.");
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("BUST! You lose!");
+                        Console.WriteLine("### Dealer wins! ###");
                         Console.ResetColor();
                         return;
                     }
@@ -218,14 +253,14 @@ namespace BlackJackCS
                 else if (userInput == "s")
                 {
 
-                    Console.ForegroundColor = ConsoleColor.Yellow;
                     // REVEAL DEALER HAND TO PLAYER
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"The dealer's cards are {FormatHand(dealerHand)}.");
                     Console.ResetColor();
                     hitting = false;
                 }
 
-                // IF PLAYER SELECTS ANYTHING ELSE
+                // PLAYER SELECTS ANYTHING ELSE
                 else
                 {
                     Console.WriteLine("Please pick a valid option.");
@@ -233,38 +268,38 @@ namespace BlackJackCS
             }
 
             // ### DEALER TURN BEGINS ###
-            // FIX NEEDED IN HERE
             while (dealerValue < 17)
             {
 
                 // DEALER DEALT ADDITIONAL CARD(S)
                 DealHand(deckOfCards, dealerHand);
                 dealerValue = AddUpHand(dealerHand);
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("The dealer takes a card...");
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"The dealer's cards are {FormatHand(dealerHand)}.");
                 Console.ResetColor();
             }
-            // is there way to streamline the color changes?
-            // is there way to streamline displaying hand values for each instance?
+
             // DEALER BUSTS
-            //Console.WriteLine($"Dealer has {dealerValue} points and you have {playerValue} points...");
             if (dealerValue > 21)
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine($"You have {playerValue} points and the dealer has {dealerValue} points.");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Dealer busts! You win!");
+                Console.WriteLine("Dealer busts!");
+                Console.WriteLine("### You win! ###");
                 Console.ResetColor();
             }
 
             // DEALER AND PLAYER TIE
-            else if (playerValue == dealerValue)
+            else if (playerValue == dealerValue && playerValue != 21)
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine($"You have {playerValue} points and the dealer has {dealerValue} points.");
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Ties go to the dealer. Dealer wins!");
+                Console.WriteLine("Push.");
+                Console.WriteLine("### No winner. ###");
                 Console.ResetColor();
             }
 
@@ -274,7 +309,7 @@ namespace BlackJackCS
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine($"You have {playerValue} points and the dealer has {dealerValue} points.");
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Dealer wins!");
+                Console.WriteLine("### Dealer wins! ###");
                 Console.ResetColor();
             }
 
@@ -284,7 +319,7 @@ namespace BlackJackCS
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine($"You have {playerValue} points and the dealer has {dealerValue} points.");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("You win! Congratulations!");
+                Console.WriteLine("### You win! ###");
                 Console.ResetColor();
             }
         }
@@ -297,15 +332,33 @@ namespace BlackJackCS
             {
                 Blackjack();
 
-                Console.WriteLine("Do you want to play again? (Y)es or (No)");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Do you want to play again? (Y)es or (N)o");
                 var userInput = Console.ReadKey(true).Key.ToString().ToLower();
+                if (userInput == "y")
+                {
+                    playing = true;
+                    Console.Clear();
+                }
 
-                Console.WriteLine("Do you want to play again? (Y)es or (No)");
-                if (userInput != "y")
+                else if (userInput == "n")
+                {
+                    playing = false;
+                    Console.Clear();
+                    Console.WriteLine("K, bye!");
+                }
+
+                // PLAYER SELECTS ANYTHING ELSE
+                else
+                {
+                    Console.WriteLine("Please pick a valid option.");
+                }
+                // FIX -- IS THIS BETTER OR ABOVE BETTER?
+                /*if (userInput != "y")
                 {
                     playing = false;
                     Console.WriteLine("K, bye!");
-                }
+                }*/
             }
         }
     }
