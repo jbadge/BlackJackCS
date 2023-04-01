@@ -101,16 +101,16 @@ namespace BlackJackCS
             Console.Clear();
         }
 
-        static void Split(List<Card> hand)
+        /*static Card Split(List<Card> hand)
         {
             var playerHand1 = hand[0];
             var playerHand2 = hand[1];
             for (int i = 1; i < 3; i++)
             {
-                playerHand = playerHand(i);
-                return playerHand;
+                hand = playerHand(i);
+                return hand;
             }
-        }
+        }*/
 
         static void YouGotBlackjack()
         {
@@ -183,11 +183,11 @@ namespace BlackJackCS
             var playerValue = AddUpHand(playerHand);
             var dealerValue = AddUpHand(dealerHand);
 
-            // SPLIT
+            /*// SPLIT
             if (playerHand[0].Value == playerHand[1].Value && playerHand[0].Value == 10)
             {
                 Split(playerHand);
-            }
+            }*/
 
             // ### PLAYER HAND BEGINS ###
             while (hitting)
@@ -333,32 +333,14 @@ namespace BlackJackCS
                 Blackjack();
 
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("Do you want to play again? (Y)es or (N)o");
+                Console.WriteLine("Do you want to play again? (Y)es or any key to exit.");
                 var userInput = Console.ReadKey(true).Key.ToString().ToLower();
-                if (userInput == "y")
-                {
-                    playing = true;
-                    Console.Clear();
-                }
 
-                else if (userInput == "n")
-                {
-                    playing = false;
-                    Console.Clear();
-                    Console.WriteLine("K, bye!");
-                }
-
-                // PLAYER SELECTS ANYTHING ELSE
-                else
-                {
-                    Console.WriteLine("Please pick a valid option.");
-                }
-                // FIX -- IS THIS BETTER OR ABOVE BETTER?
-                /*if (userInput != "y")
+                if (userInput != "y")
                 {
                     playing = false;
                     Console.WriteLine("K, bye!");
-                }*/
+                }
             }
         }
     }
